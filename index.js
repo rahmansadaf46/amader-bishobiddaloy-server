@@ -26,6 +26,8 @@ client.connect(err => {
     const foodCollection = client.db("redOnion").collection("allFood");
     const itemCollection = client.db("redOnion").collection("allBook");
     const questionCollection = client.db("redOnion").collection("allQuestion");
+    const teacherCollection = client.db("redOnion").collection("allTeacher");
+    const opinionCollection = client.db("redOnion").collection("allOpinion");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
@@ -158,6 +160,35 @@ client.connect(err => {
 
     app.get('/questions', (req, res) => {
         questionCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    })
+
+
+    //for teacher
+    app.post('/addTeacher', (req, res) => {
+        const data = req.body;
+        // console.log(req)
+        teacherCollection.insertOne({ data })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+
+
+    //for opinion
+    app.post('/addOpinion', (req, res) => {
+        const data = req.body;
+        // console.log(req)
+        opinionCollection.insertOne({ data })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+
+    app.get('/opinions', (req, res) => {
+        opinionCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
             })
