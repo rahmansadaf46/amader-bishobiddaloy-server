@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const fileUpload = require('express-fileupload');
 require('dotenv').config()
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ow4tc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kvfb4.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 //mongodb+srv://Abir:<password>@cluster0.czzkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 const app = express()
 
@@ -22,12 +22,13 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection = client.db("amaderiBissobiddaloy").collection("allOrder");
-    const itemCollection = client.db("amaderiBissobiddaloy").collection("allBook");
-    const questionCollection = client.db("amaderiBissobiddaloy").collection("allQuestion");
-    const teacherCollection = client.db("amaderiBissobiddaloy").collection("allTeacher");
-    const opinionCollection = client.db("amaderiBissobiddaloy").collection("allOpinion");
-    const appointmentCollection = client.db("amaderiBissobiddaloy").collection("allAppointment");
+    const orderCollection = client.db("redOnion").collection("allOrder");
+    const foodCollection = client.db("redOnion").collection("allFood");
+    const itemCollection = client.db("redOnion").collection("allBook");
+    const questionCollection = client.db("redOnion").collection("allQuestion");
+    const teacherCollection = client.db("redOnion").collection("allTeacher");
+    const opinionCollection = client.db("redOnion").collection("allOpinion");
+    const appointmentCollection = client.db("redOnion").collection("allAppointment");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
@@ -36,32 +37,32 @@ client.connect(err => {
                 res.send(result.insertedCount > 0);
             })
     })
-    // app.post('/addFood', (req, res) => {
-    //     const file = req.files.file;
-    //     const image = req.files.file.name;
-    //     const title = req.body.title;
-    //     const price = req.body.price;
-    //     const category = req.body.category;
-    //     const description = req.body.description;
-    //     const shortDescription = req.body.shortDescription;
+    app.post('/addFood', (req, res) => {
+        const file = req.files.file;
+        const image = req.files.file.name;
+        const title = req.body.title;
+        const price = req.body.price;
+        const category = req.body.category;
+        const description = req.body.description;
+        const shortDescription = req.body.shortDescription;
 
-    //     file.mv(`${__dirname}/food/${file.name}`,err=>{
-    //         if(err){
-    //             return res.status(500).send({msg:'Failed to upload Image'});
-    //         }
-    //     })
+        file.mv(`${__dirname}/food/${file.name}`,err=>{
+            if(err){
+                return res.status(500).send({msg:'Failed to upload Image'});
+            }
+        })
 
-    //     foodCollection.insertOne({ title, price, category, description, shortDescription, image })
-    //         .then(result => {
-    //             res.send(result.insertedCount > 0);
-    //         })
-    // })
-    // app.get('/foods', (req, res) => {
-    //     foodCollection.find({})
-    //         .toArray((err, documents) => {
-    //             res.send(documents);
-    //         })
-    // })
+        foodCollection.insertOne({ title, price, category, description, shortDescription, image })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+    app.get('/foods', (req, res) => {
+        foodCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    })
     // app.delete('/delete/:id', (req, res) => {
     //     console.log(req.params.id);
     //     studentCollection.deleteOne({ _id: ObjectId(req.params.id) })
