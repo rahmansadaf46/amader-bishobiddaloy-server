@@ -22,13 +22,13 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection = client.db("redOnion").collection("allOrder");
-    const foodCollection = client.db("redOnion").collection("allFood");
-    const itemCollection = client.db("redOnion").collection("allBook");
-    const questionCollection = client.db("redOnion").collection("allQuestion");
-    const teacherCollection = client.db("redOnion").collection("allTeacher");
-    const opinionCollection = client.db("redOnion").collection("allOpinion");
-    const appointmentCollection = client.db("redOnion").collection("allAppointment");
+    const orderCollection = client.db("amaderBissobiddaloy").collection("allOrder");
+    const foodCollection = client.db("amaderBissobiddaloy").collection("allFood");
+    const itemCollection = client.db("amaderBissobiddaloy").collection("allBook");
+    const questionCollection = client.db("amaderBissobiddaloy").collection("allQuestion");
+    const teacherCollection = client.db("amaderBissobiddaloy").collection("allTeacher");
+    const opinionCollection = client.db("amaderBissobiddaloy").collection("allOpinion");
+    const appointmentCollection = client.db("amaderBissobiddaloy").collection("allAppointment");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
