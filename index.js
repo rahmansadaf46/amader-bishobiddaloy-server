@@ -37,32 +37,32 @@ client.connect(err => {
                 res.send(result.insertedCount > 0);
             })
     })
-    app.post('/addFood', (req, res) => {
-        const file = req.files.file;
-        const image = req.files.file.name;
-        const title = req.body.title;
-        const price = req.body.price;
-        const category = req.body.category;
-        const description = req.body.description;
-        const shortDescription = req.body.shortDescription;
+    // app.post('/addFood', (req, res) => {
+    //     const file = req.files.file;
+    //     const image = req.files.file.name;
+    //     const title = req.body.title;
+    //     const price = req.body.price;
+    //     const category = req.body.category;
+    //     const description = req.body.description;
+    //     const shortDescription = req.body.shortDescription;
 
-        file.mv(`${__dirname}/food/${file.name}`,err=>{
-            if(err){
-                return res.status(500).send({msg:'Failed to upload Image'});
-            }
-        })
+    //     file.mv(`${__dirname}/food/${file.name}`,err=>{
+    //         if(err){
+    //             return res.status(500).send({msg:'Failed to upload Image'});
+    //         }
+    //     })
 
-        foodCollection.insertOne({ title, price, category, description, shortDescription, image })
-            .then(result => {
-                res.send(result.insertedCount > 0);
-            })
-    })
-    app.get('/foods', (req, res) => {
-        foodCollection.find({})
-            .toArray((err, documents) => {
-                res.send(documents);
-            })
-    })
+    //     foodCollection.insertOne({ title, price, category, description, shortDescription, image })
+    //         .then(result => {
+    //             res.send(result.insertedCount > 0);
+    //         })
+    // })
+    // app.get('/foods', (req, res) => {
+    //     foodCollection.find({})
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //         })
+    // })
     // app.delete('/delete/:id', (req, res) => {
     //     console.log(req.params.id);
     //     studentCollection.deleteOne({ _id: ObjectId(req.params.id) })
@@ -163,6 +163,31 @@ client.connect(err => {
         questionCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
+            })
+    })
+    app.get('/question/:id', (req, res) => {
+        questionCollection.find({ _id: ObjectId(req.params.id) })
+            .toArray((err, documents) => {
+                res.send(documents[0]);
+            })
+    })
+        app.delete('/deleteQuestion/:id', (req, res) => {
+        console.log(req.params.id);
+        questionCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            .then((result) => {
+                res.send(result.deletedCount > 0);
+                console.log(res);
+            })
+    })
+    app.patch('/updateQuestion/:id', (req, res) => {
+        questionCollection.updateOne({ _id: ObjectId(req.params.id) },
+            {
+                $set: {
+                    data: req.body
+                },
+            })
+            .then(result => {
+                res.send(result.matchedCount > 0);
             })
     })
 
