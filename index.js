@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const fileUpload = require('express-fileupload');
 require('dotenv').config()
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ow4tc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kvfb4.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 //mongodb+srv://Abir:<password>@cluster0.czzkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 const app = express()
 
@@ -22,12 +22,13 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection = client.db("amaderiBissobiddaloy").collection("allOrder");
-    const itemCollection = client.db("amaderiBissobiddaloy").collection("allBook");
-    const questionCollection = client.db("amaderiBissobiddaloy").collection("allQuestion");
-    const teacherCollection = client.db("amaderiBissobiddaloy").collection("allTeacher");
-    const opinionCollection = client.db("amaderiBissobiddaloy").collection("allOpinion");
-    const appointmentCollection = client.db("amaderiBissobiddaloy").collection("allAppointment");
+    const orderCollection = client.db("redOnion").collection("allOrder");
+    const foodCollection = client.db("redOnion").collection("allFood");
+    const itemCollection = client.db("redOnion").collection("allBook");
+    const questionCollection = client.db("redOnion").collection("allQuestion");
+    const teacherCollection = client.db("redOnion").collection("allTeacher");
+    const opinionCollection = client.db("redOnion").collection("allOpinion");
+    const appointmentCollection = client.db("redOnion").collection("allAppointment");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
@@ -162,6 +163,31 @@ client.connect(err => {
         questionCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
+            })
+    })
+    app.get('/question/:id', (req, res) => {
+        questionCollection.find({ _id: ObjectId(req.params.id) })
+            .toArray((err, documents) => {
+                res.send(documents[0]);
+            })
+    })
+        app.delete('/deleteQuestion/:id', (req, res) => {
+        console.log(req.params.id);
+        questionCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            .then((result) => {
+                res.send(result.deletedCount > 0);
+                console.log(res);
+            })
+    })
+    app.patch('/updateQuestion/:id', (req, res) => {
+        questionCollection.updateOne({ _id: ObjectId(req.params.id) },
+            {
+                $set: {
+                    data: req.body
+                },
+            })
+            .then(result => {
+                res.send(result.matchedCount > 0);
             })
     })
 
