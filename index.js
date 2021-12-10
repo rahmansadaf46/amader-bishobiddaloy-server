@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const fileUpload = require('express-fileupload');
 require('dotenv').config()
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kvfb4.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.${process.env.DB_CODE}.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 //mongodb+srv://Abir:<password>@cluster0.czzkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 const app = express()
 
@@ -22,13 +22,13 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection = client.db("amaderBissobiddaloy").collection("allOrder");
-    const foodCollection = client.db("amaderBissobiddaloy").collection("allFood");
-    const itemCollection = client.db("amaderBissobiddaloy").collection("allBook");
-    const questionCollection = client.db("amaderBissobiddaloy").collection("allQuestion");
-    const teacherCollection = client.db("amaderBissobiddaloy").collection("allTeacher");
-    const opinionCollection = client.db("amaderBissobiddaloy").collection("allOpinion");
-    const appointmentCollection = client.db("amaderBissobiddaloy").collection("allAppointment");
+    const orderCollection = client.db(`${process.env.DB_FILE}`).collection("allOrder");
+    const foodCollection = client.db(`${process.env.DB_FILE}`).collection("allFood");
+    const itemCollection = client.db(`${process.env.DB_FILE}`).collection("allBook");
+    const questionCollection = client.db(`${process.env.DB_FILE}`).collection("allQuestion");
+    const teacherCollection = client.db(`${process.env.DB_FILE}`).collection("allTeacher");
+    const opinionCollection = client.db(`${process.env.DB_FILE}`).collection("allOpinion");
+    const appointmentCollection = client.db(`${process.env.DB_FILE}`).collection("allAppointment");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
@@ -105,7 +105,7 @@ client.connect(err => {
                 res.send(result.matchedCount > 0);
             })
     })
-    
+
     app.patch('/updateAmount/:id', (req, res) => {
         orderCollection.updateOne({ _id: ObjectId(req.params.id) },
             {
@@ -127,9 +127,9 @@ client.connect(err => {
         const description = req.body.description;
         const shortDescription = req.body.shortDescription;
 
-        file.mv(`${__dirname}/item/${file.name}`,err=>{
-            if(err){
-                return res.status(500).send({msg:'Failed to upload Image'});
+        file.mv(`${__dirname}/item/${file.name}`, err => {
+            if (err) {
+                return res.status(500).send({ msg: 'Failed to upload Image' });
             }
         })
 
@@ -171,7 +171,7 @@ client.connect(err => {
                 res.send(documents[0]);
             })
     })
-        app.delete('/deleteQuestion/:id', (req, res) => {
+    app.delete('/deleteQuestion/:id', (req, res) => {
         console.log(req.params.id);
         questionCollection.deleteOne({ _id: ObjectId(req.params.id) })
             .then((result) => {
@@ -202,13 +202,13 @@ client.connect(err => {
         const teacherName = req.body.teacherName;
         const workingPlace = req.body.workingPlace;
         // console.log(req)
-        teacherCollection.insertOne({ category, designation,status,subject,teacherName,workingPlace})
+        teacherCollection.insertOne({ category, designation, status, subject, teacherName, workingPlace })
             .then(result => {
                 res.send(result.insertedCount > 0);
             })
     })
 
-    
+
     app.get('/teachers', (req, res) => {
         teacherCollection.find({})
             .toArray((err, documents) => {
@@ -219,6 +219,38 @@ client.connect(err => {
         teacherCollection.find({ _id: ObjectId(req.params.id) })
             .toArray((err, documents) => {
                 res.send(documents[0]);
+            })
+    })
+    app.delete('/deleteTeacher/:id', (req, res) => {
+        console.log(req.params.id);
+        teacherCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            .then((result) => {
+                res.send(result.deletedCount > 0);
+                console.log(res);
+            })
+    })
+    app.patch('/updateTeacher/:id', (req, res) => {
+        teacherCollection.updateOne({ _id: ObjectId(req.params.id) },
+        // const category = req.body.category;
+        // const designation = req.body.designation;
+        // const status = req.body.status;
+        // const subject = req.body.subject;
+        // const teacherName = req.body.teacherName;
+        // const workingPlace = req.body.workingPlace;
+            {
+                $set: {
+                    category: req.body.category,
+                    designation: req.body.designation,
+                    status: req.body.status,
+                    subject: req.body.subject,
+                    teacherName: req.body.teacherName,
+                    workingPlace: req.body.workingPlace,
+                    // console.log(req)
+                    // approvedData: req.body.approvedData
+                },
+            })
+            .then(result => {
+                res.send(result.matchedCount > 0);
             })
     })
 
@@ -241,20 +273,20 @@ client.connect(err => {
     })
 
 
-     //for appointment
-     app.post('/addAppointment', (req, res) => {
+    //for appointment
+    app.post('/addAppointment', (req, res) => {
         // const data = req.body
         const email = req.body.email;
         const teacher = req.body.teacher;
         const status = req.body.status;
         // console.log(req)
         const approvedData = {};
-        appointmentCollection.insertOne({email,teacher,status,approvedData})
+        appointmentCollection.insertOne({ email, teacher, status, approvedData })
             .then(result => {
                 res.send(result.insertedCount > 0);
             })
     })
-    
+
     app.get('/appointments', (req, res) => {
         appointmentCollection.find({})
             .toArray((err, documents) => {
@@ -265,7 +297,7 @@ client.connect(err => {
         appointmentCollection.updateOne({ _id: ObjectId(req.params.id) },
             {
                 $set: {
-                    email :req.body.email,
+                    email: req.body.email,
                     teacher: req.body.teacher,
                     status: req.body.status,
                     // console.log(req)
