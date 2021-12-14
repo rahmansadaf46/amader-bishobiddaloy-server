@@ -29,6 +29,7 @@ client.connect(err => {
     const teacherCollection = client.db(`${process.env.DB_FILE}`).collection("allTeacher");
     const opinionCollection = client.db(`${process.env.DB_FILE}`).collection("allOpinion");
     const appointmentCollection = client.db(`${process.env.DB_FILE}`).collection("allAppointment");
+    const universityCollection = client.db(`${process.env.DB_FILE}`).collection("allUniversity");
     app.post('/addOrder', (req, res) => {
         const order = req.body;
         console.log(order);
@@ -147,6 +148,23 @@ client.connect(err => {
             })
     })
 
+     //for university
+     app.post('/addUniversity', (req, res) => {
+        const data = req.body;
+        // console.log(req)
+        universityCollection.insertOne({ data })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+
+
+    app.get('/universities', (req, res) => {
+        universityCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    })
 
     //for questions 
 
