@@ -148,6 +148,36 @@ client.connect(err => {
             })
     })
 
+
+    app.get('/item/:id', (req, res) => {
+        itemCollection.find({ _id: ObjectId(req.params.id) })
+            .toArray((err, documents) => {
+                res.send(documents[0]);
+            })
+    })
+    app.patch('/updateItem/:id', (req, res) => {
+        itemCollection.updateOne({ _id: ObjectId(req.params.id) },
+            {
+                $set: {
+                    title: req.body.title,
+                    price: req.body.price,
+                    description: req.body.description,
+                    shortDescription: req.body.shortDescription,
+                },
+            })
+            .then(result => {
+                res.send(result.matchedCount > 0);
+            })
+    })
+    app.delete('/deleteItem/:id', (req, res) => {
+        console.log(req.params.id);
+        itemCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            .then((result) => {
+                res.send(result.deletedCount > 0);
+                console.log(res);
+            })
+    })
+
      //for university
      app.post('/addUniversity', (req, res) => {
         const data = req.body;
